@@ -9,7 +9,9 @@ Vue.use(VueRouter)
 
 let app = Vue.extend(App)
 
-var router = new VueRouter()
+var router = new VueRouter({
+  linkActiveClass: 'active'
+})
 
 router.map({
   '/goods': {
@@ -22,5 +24,5 @@ router.map({
     component: seller
   }
 })
-router.go('/goods')
 router.start(app, '#app')
+router.go('/goods')
