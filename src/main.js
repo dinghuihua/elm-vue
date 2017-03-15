@@ -1,8 +1,26 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import App from './App'
+import goods from 'components/goods/goods'
+import ratings from 'components/ratings/ratings'
+import seller from 'components/seller/seller'
 
-/* eslint-disable no-new */
-new Vue({
-  el: 'body',
-  components: { App }
+Vue.use(VueRouter)
+
+let app = Vue.extend(App)
+
+var router = new VueRouter()
+
+router.map({
+  '/goods': {
+    component: goods
+  },
+  '/ratings': {
+    component: ratings
+  },
+  '/seller': {
+    component: seller
+  }
 })
+router.go('/goods')
+router.start(app, '#app')
