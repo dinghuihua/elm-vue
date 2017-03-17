@@ -17,17 +17,29 @@
           <span class="text">{{seller.supports[0].description}}</span>
         </div>
       </div>
-      <div v-if="seller.supports" class="support-count">
+      <div v-if="seller.supports" class="support-count" @click="showDetail()">
         <span class="count">{{seller.supports.length}}个</span>
         <i class="icon-arrow_right"></i>
       </div>
     </div>
-    <div class="bulletin-wrapper">
+    <div class="bulletin-wrapper" @click="showDetail()">
       <span class="bulletin-icon"></span><span class="bulletin-text">{{seller.bulletin}}</span>
       <i class="icon-arrow_right arrow-right"></i>
     </div>
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
+    </div>
+    <!--浮层-->
+    <div v-show="detailShow" class="detail">
+      <div class="detail-wrapper clearfix">
+        <!--实际内容-->
+        <div class="detail-main">
+          <p>{{seller.bulletin}}</p>
+        </div>
+      </div>
+      <div class="detail-close" @click="showDetail()">
+        <i class="icon-close"></i>
+      </div>
     </div>
 	</div>
 </template>
@@ -39,6 +51,16 @@ export default {
       type: Object
     }
   },
+  data () {
+    return {
+      detailShow: false
+    }
+  },
+  methods: {
+    showDetail () {
+      this.detailShow = !this.detailShow
+    }
+  },
   created () {
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
   }
@@ -46,10 +68,11 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  @import "../../assets/stylus/mixin.styl"
+  @import "../../assets/stylus/mixin"
 
   .header
     position relative
+    overflow hidden
     color #fff
     background rgba(7, 17, 27, 0.5)
     .content-wrapper
@@ -130,7 +153,7 @@ export default {
       .bulletin-icon
         display inline-block
         vertical-align top
-        margin-top 7px
+        margin-top 8px
         width 22px
         height 12px
         bg-image('bulletin')
@@ -151,4 +174,25 @@ export default {
       width 100%
       z-index -1
       filter blur(10px)
+    .detail
+      position fixed
+      top 0
+      left 0
+      z-index 100
+      width 100%
+      height 100%
+      overflow auto
+      background rgba(7, 17, 27, 0.8)
+      .detail-wrapper
+        min-height 100%
+        .detail-main
+          margin-top 64px
+          padding-bottom 64px
+      .detail-close
+        position relative
+        width 32px
+        height 32px
+        margin -64px auto 0
+        clear both
+        font-size 32px
 </style>
