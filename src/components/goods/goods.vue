@@ -100,7 +100,10 @@
     methods: {
       _drop (target) {
         /* 利用$refs访问到子组件 */
-        this.$refs.shopcart.drop(target)
+        // 体验优化 异步执行下落drop动画
+        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target)
+        })
       },
       _initScroll () {
         this.menuScroll = new BScroll(this.$els.menuWrapper, {
