@@ -36,7 +36,7 @@
         </li>
       </ul>
     </div>
-    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
@@ -98,6 +98,10 @@
       })
     },
     methods: {
+      _drop (target) {
+        /* 利用$refs访问到子组件 */
+        this.$refs.shopcart.drop(target)
+      },
       _initScroll () {
         this.menuScroll = new BScroll(this.$els.menuWrapper, {
           click: true
@@ -133,6 +137,12 @@
     components: {
       shopcart,
       cartcontrol
+    },
+    events: {
+      /* 接收执行 来自cartcontrol的cart.add事件 */
+      'cart.add' (target) {
+        this._drop(target)
+      }
     }
   }
 </script>
