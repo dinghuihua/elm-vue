@@ -2,16 +2,16 @@
   <div class="goods">
     <div class="menu-wrapper" v-el:menu-wrapper>
       <ul>
-        <li v-for="item in goods" class="menu-item">
+        <li v-for="item in goods" class="menu-item" :class="{'current':currentIndex===$index}" @click="selectMenu($index, $event)">
           <span class="text border-1px">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper" v-el:food-wrapper>
+    <div class="foods-wrapper" v-el:foods-wrapper>
       <ul>
-        <li v-for="item in goods" class="food-list">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -41,12 +41,29 @@
   const ERR_OK = 0
 
   export default{
+    /* listHeight: 每个区间对应的高度 */
     props: {
       seller: {
         type: Object
-      },
-      goods: {
-        type: Object
+      }
+    },
+    data () {
+      return {
+        goods: [],
+        listHeight: [],
+        scrollY: 0
+      }
+    },
+    computed: {
+      currentIndex () {
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i]
+          let height2 = this.listHeight[i + 1]
+          if (this.scrollY >= height1 && this.scrollY < height2) {
+            return i
+          }
+        }
+        return 0
       }
     },
     created () {
@@ -57,14 +74,41 @@
           this.goods = response.data
           this.$nextTick(() => {
             this._initScroll()
+            this._calulatHeight()
           })
         }
       })
     },
     methods: {
       _initScroll () {
-        this.menuScroll = new BScroll(this.$els.menuWrapper, {})
-        this.foodScroll = new BScroll(this.$els.foodWrapper, {})
+        this.menuScroll = new BScroll(this.$els.menuWrapper, {
+          click: true
+        })
+        this.foodScroll = new BScroll(this.$els.foodsWrapper, {
+          probeType: 3
+        })
+        this.foodScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y))
+        })
+      },
+      _calulatHeight () {
+        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
+        let height = 0
+        this.listHeight.push(height)
+        for (let i = 0; i < foodList.length; i++) {
+          let item = foodList[i]
+          height += item.clientHeight
+          this.listHeight.push(height)
+        }
+      },
+      selectMenu (index, event) {
+        if (!event._constructed) {
+          return
+        }
+        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
+        let el = foodList[index]
+        this.foodScroll.scrollToElement(el, 300)
+        console.log(index)
       }
     }
   }
@@ -89,6 +133,14 @@
         height 54px
         line-height 14px
         padding 0 12px
+        &.current
+          position relative
+          margin-top -1px
+          z-index 2
+          background-color #fff
+          font-weight 700
+          .text
+            border-none()
         .icon
           display inline-block
           vertical-align top
