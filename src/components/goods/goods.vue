@@ -11,7 +11,7 @@
     </div>
     <div class="foods-wrapper" v-el:foods-wrapper>
       <ul>
-        <li v-for="item in goods" class="food-list food-list-hook">
+        <li v-for="item in goods" @click="chooseFood(food, $event)" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -37,6 +37,8 @@
       </ul>
     </div>
     <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <!-- 商品详情页 -->
+    <food :food="selectedFood" v-ref:food></food>
   </div>
 </template>
 
@@ -44,6 +46,7 @@
   import BScroll from 'better-scroll'
   import shopcart from 'components/shopcart/shopcart'
   import cartcontrol from 'components/cartcontrol/cartcontrol'
+  import food from 'components/food/food'
 
   const ERR_OK = 0
 
@@ -58,7 +61,8 @@
       return {
         goods: [],
         listHeight: [],
-        scrollY: 0
+        scrollY: 0,
+        selectedFood: {}
       }
     },
     computed: {
@@ -135,11 +139,19 @@
         let el = foodList[index]
         this.foodScroll.scrollToElement(el, 300)
         console.log(index)
+      },
+      chooseFood (food, event) {
+        if (!event._constructed) {
+          return
+        }
+        this.$refs.food.show()
+        this.selectedFood = food
       }
     },
     components: {
       shopcart,
-      cartcontrol
+      cartcontrol,
+      food
     },
     events: {
       /* 接收执行 来自cartcontrol的cart.add事件 */
