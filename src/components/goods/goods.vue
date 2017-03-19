@@ -11,10 +11,10 @@
     </div>
     <div class="foods-wrapper" v-el:foods-wrapper>
       <ul>
-        <li v-for="item in goods" @click="chooseFood(food, $event)" class="food-list food-list-hook">
+        <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li v-for="food in item.foods" @click="chooseFood(food, $event)" class="food-item border-1px">
               <div class="icon">
                 <img :src="food.icon" width="57" height="57">
               </div>
@@ -38,8 +38,8 @@
     </div>
     <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
     <!-- 商品详情页 -->
-    <food :food="selectedFood" v-ref:food></food>
   </div>
+  <food :food="selectedFood" v-ref:food></food>
 </template>
 
 <script>
@@ -138,7 +138,6 @@
         let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
         let el = foodList[index]
         this.foodScroll.scrollToElement(el, 300)
-        console.log(index)
       },
       chooseFood (food, event) {
         if (!event._constructed) {
