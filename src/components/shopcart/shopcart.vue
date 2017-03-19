@@ -40,6 +40,7 @@
       </div>
     </div>
   </div>
+  <div class="list-mask" @click="hideList()" v-show="listShow" transition="fade"></div>
 </template>
 
 <script>
@@ -164,6 +165,10 @@
         this.selectFoods.forEach((food) => {
           food.count = 0
         })
+      },
+      hideList () {
+        console.log('yingcang')
+        this.fold = true
       }
     },
     transitions: {
@@ -368,4 +373,19 @@
             right 0
             bottom 6px
 
+  .list-mask
+    position fixed
+    top 0
+    left 0
+    width 100%
+    height 100%
+    z-index 40
+    backdrop-filter: blur(10px)
+    &.fade-transition
+      transition all 0.5s
+      opacity 1
+      background-color rgba(7,17,27,0.6)
+    &.fade-enter, &.fade-leave
+      opacity 0
+      background-color rgba(7,17,27,0)
 </style>
