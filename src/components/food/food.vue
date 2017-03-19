@@ -1,5 +1,5 @@
 <template>
-  <div class="food" v-show="showFlag" transition="move">
+  <div class="food" v-show="showFlag" transition="move" v-el:food>
     <div class="food-content">
       <div class="image-header">
         <img :src="food.image">
@@ -17,11 +17,21 @@
           <span class="now">￥{{food.price}}</span><span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
         </div>
       </div>
+      <div class="cartcontrol-wrapper">
+        <cartcontrol :food="food"></cartcontrol>
+      </div>
+      <div @click.stop.prevent="addToCartFirst($event)" class="buy-button"
+           v-show="!food.count || food.count === 0"
+      transition="fade">加入购物车</div>
     </div>
   </div>
 </template>
 
 <script>
+  import BScroll from 'better-scroll'
+  import Vue from 'vue'
+  import cartcontrol from 'components/cartcontrol/cartcontrol'
+
   export default {
     props: {
       food: {
@@ -36,10 +46,29 @@
     methods: {
       show () {
         this.showFlag = true
+        this.$nextTick(() => {
+          if (!this.scroll) {
+            this.scroll = new BScroll(this.$els.food, {
+              click: true
+            })
+          } else {
+            this.scroll.refresh()
+          }
+        })
       },
       hide () {
         this.showFlag = false
+      },
+      addToCartFirst (event) {
+        if (!event._constructed) {
+          return
+        }
+        this.$dispatch('cart.add', event.target)
+        Vue.set(this.food, 'count', 1)
       }
+    },
+    components: {
+      cartcontrol
     }
   }
 </script>
@@ -96,14 +125,37 @@
         .sell-count
           padding-right 12px
       .price
-        margin-bottom 18px
+        line-height 24px
+        font-weight 700
         .now
-          line-height 24px
           font-size 14px
-          font-weight 700
           color rgb(240, 20, 20)
         .old
           text-decoration line-through
           font-size 10px
           color rgb(147, 153, 159)
+    .cartcontrol-wrapper
+      position absolute
+      right 12px
+      bottom 12px
+    .buy-button
+      position absolute
+      right 18px
+      bottom 18px
+      z-index 10
+      height 24px
+      line-height 24px
+      padding 0 12px
+      box-sizing border-box
+      border-radius 12px
+      font-size 10px
+      color #fff
+      background-color rgb(0, 160, 220)
+      &.fade-transition
+        transition all 0.2s
+        opacity 1
+      &.fade-enter, &.fade-leave
+        transition all 0.2s
+        opacity 0
+
 </style>
