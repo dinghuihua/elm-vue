@@ -23,7 +23,7 @@
              v-show="!food.count || food.count === 0"
              transition="fade">加入购物车</div>
       </div>
-      <split></split>
+      <split v-show="food.info"></split>
       <div class="info" v-show="food.info">
         <div class="title">商品信息</div>
         <p class="text">{{food.info}}</p>
