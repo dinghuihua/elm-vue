@@ -37,8 +37,8 @@
       </ul>
     </div>
     <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
-    <!-- 商品详情页 -->
   </div>
+  <!-- 商品详情页 -->
   <food :food="selectedFood" v-ref:food></food>
 </template>
 

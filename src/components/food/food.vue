@@ -24,6 +24,16 @@
              transition="fade">加入购物车</div>
       </div>
       <split></split>
+      <div class="info" v-show="food.info">
+        <div class="title">商品信息</div>
+        <p class="text">{{food.info}}</p>
+      </div>
+      <split></split>
+      <div class="food-ratings">
+        <h1 class="title">商品评价</h1>
+        <ratingselect :ratings="food.ratings" :select-type="selectType"
+        :only-content="onlyContent" :desc="desc"></ratingselect>
+      </div>
     </div>
   </div>
 </template>
@@ -33,6 +43,11 @@
   import Vue from 'vue'
   import cartcontrol from 'components/cartcontrol/cartcontrol'
   import split from 'components/split/split'
+  import ratingselect from 'components/ratingselect/ratingselect'
+
+  // const POSITIVE = 0
+  // const NEGATIVE = 1
+  const ALL = 2
 
   export default {
     props: {
@@ -42,12 +57,22 @@
     },
     data () {
       return {
-        showFlag: false
+        showFlag: false,
+        selectType: ALL,
+        onlyContent: true,
+        desc: {
+          all: '全部',
+          positive: '推荐',
+          negative: '吐槽'
+        }
       }
     },
     methods: {
       show () {
         this.showFlag = true
+        // selectType/onlyContent始终保持初始化状态,不受其他引用的影响
+        this.selectType = ALL
+        this.onlyContent = true
         this.$nextTick(() => {
           if (!this.scroll) {
             this.scroll = new BScroll(this.$els.food, {
@@ -71,7 +96,8 @@
     },
     components: {
       cartcontrol,
-      split
+      split,
+      ratingselect
     }
   }
 </script>
@@ -138,28 +164,48 @@
           text-decoration line-through
           font-size 10px
           color rgb(147, 153, 159)
-    .cartcontrol-wrapper
-      position absolute
-      right 12px
-      bottom 12px
-    .buy-button
-      position absolute
-      right 18px
-      bottom 18px
-      z-index 10
-      height 24px
-      line-height 24px
-      padding 0 12px
-      box-sizing border-box
-      border-radius 12px
-      font-size 10px
-      color #fff
-      background-color rgb(0, 160, 220)
-      &.fade-transition
-        transition all 0.2s
-        opacity 1
-      &.fade-enter, &.fade-leave
-        transition all 0.2s
-        opacity 0
+      .cartcontrol-wrapper
+        position absolute
+        right 12px
+        bottom 12px
+      .buy-button
+        position absolute
+        right 18px
+        bottom 18px
+        z-index 10
+        height 24px
+        line-height 24px
+        padding 0 12px
+        box-sizing border-box
+        border-radius 12px
+        font-size 10px
+        color #fff
+        background-color rgb(0, 160, 220)
+        &.fade-transition
+          transition all 0.2s
+          opacity 1
+        &.fade-enter, &.fade-leave
+          transition all 0.2s
+          opacity 0
+
+    .info
+      padding 18px
+      .title
+        line-height 14px
+        margin-bottom 6px
+        font-size 14px
+        color rgb(7, 17, 27)
+      .text
+        padding 0 8px
+        line-height 24px
+        font-size 12px
+        color rgb(77, 85, 93)
+    .food-ratings
+      padding-top 18px
+      .title
+        line-height 14px
+        margin-left 18px
+        font-size 14px
+        color rgb(7, 17, 27)
 
 </style>
