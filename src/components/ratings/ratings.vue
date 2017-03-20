@@ -1,5 +1,5 @@
 <template>
-  <div class="ratings">
+  <div class="ratings" v-el:rating>
     <div class="ratings-content">
       <div class="overview">
         <div class="overview-left">
@@ -26,11 +26,38 @@
       </div>
       <split></split>
       <ratingselect :ratings="ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></ratingselect>
+      <div class="rating-wrapper">
+        <ul>
+          <li v-for="rating in ratings" class="rating-item border-1px">
+            <div class="avatar">
+              <img :src="rating.avatar" width="28" height="28">
+            </div>
+            <div class="content">
+              <h2 class="name">{{ratings.username}}</h2>
+              <div class="star-wrapper">
+                <star :size="24" :score="rating.score"></star>
+                <span class="delivery" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
+              </div>
+              <p class="text">{{rating.text}}</p>
+              <div class="recommend-wrapper">
+                <i :class="{'icon-thumb_up': rating.rateType === 0 ,
+                'icon-thumb_down':rating.rateType === 1 }"></i>
+                <span class="recommend-item" v-for="item in rating.recommend" v-show="rating.recommend && rating.recommend.length">
+                  {{item}}
+                </span>
+              </div>
+              <div class="time">{{rating.rateTime | formatDate}}</div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import BScroll from 'better-scroll'
+  import {formatDate} from 'assets/js/date'
   import star from 'components/star/star'
   import split from 'components/split/split'
   import ratingselect from 'components/ratingselect/ratingselect'
@@ -61,8 +88,24 @@
         response = response.body
         if (response.errno === ERR_OK) {
           this.ratings = response.data
+          // 数据变了, 但dom没有立即更新,会导致BScroll计算不正确, 所以应该调用$nextTick, dom更新ok后再使用BScroll
+          this.$nextTick(() => {
+            if (!this.scroll) {
+              this.scroll = new BScroll(this.$els.rating, {
+                click: true
+              })
+            } else {
+              this.scroll.refresh()
+            }
+          })
         }
       })
+    },
+    filters: {
+      formatDate (time) {
+        let date = new Date(time)
+        return formatDate(date, 'yyyy-MM-dd hh:mm')
+      }
     },
     components: {
       star,
@@ -73,6 +116,8 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import "../../assets/stylus/mixin"
+
   .ratings
     position absolute
     top 174px
@@ -132,6 +177,73 @@
           .delivery
             margin-left 12px
             font-size 12px
+            color rgb(147, 153, 159)
+
+
+    .rating-wrapper
+      padding 0 18px
+      .rating-item
+        display flex
+        padding 18px 0
+        border-1px(rgba(7, 17, 27, .1))
+        .avatar
+          flex 0 0 28px
+          width 28px
+          margin-right 12px
+          img
+            border-radius 50%
+        .content
+          flex 1
+          position relative
+          .name
+            margin-bottom 4px
+            line-height 12px
+            font-size 10px
+            color rgb(7, 17, 27)
+          .star-wrapper
+            margin-bottom 6px
+            font-size 0
+            .star
+              display inline-block
+              margin-right 6px
+            .delivery
+              display inline-block
+              vertical-align top
+              line-height 12px
+              font-size 10px
+              color rgb(147, 153, 159)
+          .text
+            line-height 18px
+            margin-bottom 8px
+            font-size 12px
+            color rgb(7, 17, 27)
+          .recommend-wrapper
+            font-size 0
+            .icon-thumb_up, .icon-thumb_down
+              display inline-block
+              margin-right 8px
+              font-size 12px
+            .icon-thumb_up
+              color rgb(0, 160, 220)
+            .icon-thumb_down
+              color rgb(183, 187, 191)
+            .recommend-item
+              display inline-block
+              padding 0 6px
+              margin-right 8px
+              margin-bottom 4px
+              line-height 16px
+              border 1px solid rgba(7, 17, 27, 0.1)
+              border-radius 1px
+              font-size 9px
+              color rgb(147, 153, 159)
+              background-color #fff
+          .time
+            position absolute
+            top 0
+            right 0
+            line-height 12px
+            font-size 10px
             color rgb(147, 153, 159)
 
 
