@@ -46,7 +46,17 @@
           </li>
         </ul>
       </div>
-      <div class="pics"></div>
+      <split></split>
+      <div class="pics">
+        <h1 class="title">商家实景</h1>
+        <div class="pic-wrapper" v-el:pic-wrapper>
+          <ul class="pic-list" v-el:pic-list>
+            <li class="pic-item" v-for="pic in seller.pics">
+              <img :src="pic" width="120" height="90">
+            </li>
+          </ul>
+        </div>
+      </div>
       <div class="infos"></div>
     </div>
   </div>
@@ -76,11 +86,13 @@
       // 观测 seller的变化 刚开始刷新页面的时候才会改变,组件间切换时不会改变
       'seller' () {
         this._initScroll()
+        this._initPics()
       }
     },
     ready () {
       // dom 完全渲染完才会调用此钩子 它的执行优先于watch
       this._initScroll()
+      this._initPics()
     },
     methods: {
       _initScroll () {
@@ -90,6 +102,28 @@
           })
         } else {
           this.scroll.refresh()
+        }
+      },
+      _initPics () {
+        // 手动设置图片容器的宽度, 它实际宽度大于它父容器的宽度时, BScroll才可以滚动
+        if (this.seller.pics) {
+          let picWidth = 120
+          let margin = 6
+          let width = (picWidth + margin) * this.seller.pics.length - margin
+          this.$els.picList.style.width = width + 'px'
+          this.$nextTick(() => {
+            // 组件切换时 refresh 让它生效
+            if (!this.picScroll) {
+              this.picScroll = new BScroll(this.$els.picWrapper, {
+                // 横向滚动
+                scrollX: true,
+                // 当它横向滚动的时候,忽略垂直方向的滚动
+                eventPassthrough: 'vertical'
+              })
+            } else {
+              this.picScroll.refresh()
+            }
+          })
         }
       },
       favorite () {
@@ -183,6 +217,7 @@
       padding 18px 18px 0 18px
       .title
         margin-bottom 8px
+        line-height 14px
         font-size 14px
         color rgb(7, 17, 27)
       .content-wrapper
@@ -222,4 +257,24 @@
             vertical-align top
             font-size 12px
             color rgb(7, 17, 27)
+    .pics
+      padding 18px
+      .title
+        margin-bottom 12px
+        line-height 14px
+        font-size 14px
+        color rgb(7, 17, 27)
+      .pic-wrapper
+        width 100%
+        overflow hidden
+        white-space nowrap
+        .pic-list
+          font-size 0
+          .pic-item
+            display inline-block
+            margin-right 6px
+            width 120px
+            height 90px
+          &:last-child
+            margin-right 0
 </style>
