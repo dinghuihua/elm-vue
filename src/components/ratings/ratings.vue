@@ -39,10 +39,9 @@
                 <span class="delivery" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
               </div>
               <p class="text">{{rating.text}}</p>
-              <div class="recommend-wrapper">
-                <i :class="{'icon-thumb_up': rating.rateType === 0 ,
-                'icon-thumb_down':rating.rateType === 1 }"></i>
-                <span class="recommend-item" v-for="item in rating.recommend" v-show="rating.recommend && rating.recommend.length">
+              <div class="recommend-wrapper" v-show="rating.recommend && rating.recommend.length">
+                <i class="icon-thumb_up"></i>
+                <span class="recommend-item" v-for="item in rating.recommend">
                   {{item}}
                 </span>
               </div>
@@ -246,18 +245,14 @@
             color rgb(7, 17, 27)
           .recommend-wrapper
             font-size 0
-            .icon-thumb_up, .icon-thumb_down
+            .icon-thumb_up,.recommend-item
               display inline-block
               margin-right 8px
-              font-size 12px
             .icon-thumb_up
+              font-size 12px
               color rgb(0, 160, 220)
-            .icon-thumb_down
-              color rgb(183, 187, 191)
             .recommend-item
-              display inline-block
               padding 0 6px
-              margin-right 8px
               margin-bottom 4px
               line-height 16px
               border 1px solid rgba(7, 17, 27, 0.1)
