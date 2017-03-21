@@ -28,8 +28,8 @@
             </div>
           </li>
         </ul>
-        <div class="wish-wrapper">
-          <i class="icon-favorite" :class="{'active': favorited}" @click="favorite"></i>
+        <div class="wish-wrapper" @click="toggleFavorite">
+          <i class="icon-favorite" :class="{'active': favorited}"></i>
           <span class="text">{{favoriteText}}</span>
         </div>
       </div>
@@ -57,7 +57,13 @@
           </ul>
         </div>
       </div>
-      <div class="infos"></div>
+      <split></split>
+      <div class="infos">
+        <div class="title border-1px">商家信息</div>
+        <ul>
+          <li class="info-item border-1px" v-for="info in seller.infos">{{info}}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -75,8 +81,12 @@
     },
     data () {
       return {
-        favorited: false,
-        favoriteText: '收藏'
+        favorited: false
+      }
+    },
+    computed: {
+      favoriteText () {
+        return this.favorited ? '已收藏' : '收藏'
       }
     },
     created () {
@@ -126,13 +136,11 @@
           })
         }
       },
-      favorite () {
-        this.favorited = !this.favorited
-        if (this.favorited) {
-          this.favoriteText = '已收藏'
-        } else {
-          this.favoriteText = '收藏'
+      toggleFavorite (event) {
+        if (!event._constructed) {
+          return
         }
+        this.favorited = !this.favorited
       }
     },
     components: {
@@ -205,6 +213,7 @@
           font-size 24px
           line-height 24px
           text-align center
+          color #d4d6d9
           &.active
             color rgb(240, 20, 20)
         .text
@@ -277,4 +286,20 @@
             height 90px
           &:last-child
             margin-right 0
+    .infos
+      padding 18px 18px 0
+      .title
+        padding-bottom 12px
+        line-height 14px
+        border-1px(rgba(7, 17, 27, 0.1))
+        font-size 14px
+        color rgb(7, 17, 27)
+      .info-item
+        padding-top 16px 12px
+        line-height 16px
+        border-1px(rgba(7, 17, 27, 0.1))
+        font-size 12px
+        color rgb(7, 17, 27)
+        &:last-item
+          border-none()
 </style>
