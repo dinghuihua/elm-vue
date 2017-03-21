@@ -1,5 +1,5 @@
 <template>
-  <div class="seller">
+  <div class="seller" v-el:seller>
     <div class="seller-content">
       <div class="overview">
         <h1 class="name">{{seller.name}}</h1>
@@ -34,14 +34,26 @@
         </div>
       </div>
       <split></split>
-      <div class="seller-banner"></div>
-      <div class="seller-photo"></div>
-      <div class="seller-info"></div>
+      <div class="bulletin">
+        <h1 class="title">公告与活动</h1>
+        <div class="content-wrapper border-1px">
+          <p class="content">{{seller.bulletin}}</p>
+        </div>
+        <ul v-if="seller.supports" class="bulletin-list">
+          <li class="bulletin-item border-1px" v-for="item in seller.supports">
+            <span class="icon" :class="classMap[seller.supports[$index].type]"></span>
+            <span class="text">{{seller.supports[$index].description}}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="pics"></div>
+      <div class="infos"></div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import BScroll from 'better-scroll'
   import star from 'components/star/star'
   import split from 'components/split/split'
 
@@ -57,7 +69,29 @@
         favoriteText: '收藏'
       }
     },
+    created () {
+      this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+    },
+    watch: {
+      // 观测 seller的变化 刚开始刷新页面的时候才会改变,组件间切换时不会改变
+      'seller' () {
+        this._initScroll()
+      }
+    },
+    ready () {
+      // dom 完全渲染完才会调用此钩子 它的执行优先于watch
+      this._initScroll()
+    },
     methods: {
+      _initScroll () {
+        if (!this.scroll) {
+          this.scroll = new BScroll(this.$els.seller, {
+            click: true
+          })
+        } else {
+          this.scroll.refresh()
+        }
+      },
       favorite () {
         this.favorited = !this.favorited
         if (this.favorited) {
@@ -106,43 +140,86 @@
           margin-right 12px
           font-size 10px
           color rgb(77, 85, 93)
-    .remark
-      padding-top 18px
-      display flex
-      .block
-        flex 1
-        text-align center
-        border-right 1px solid rgba(7,17,27,0.1)
-        &:last-child
-          border-right none
-        h2
+      .remark
+        padding-top 18px
+        display flex
+        .block
+          flex 1
+          text-align center
+          border-right 1px solid rgba(7,17,27,0.1)
+          &:last-child
+            border-right none
+          h2
+            margin-bottom 4px
+            line-height 10px
+            font-size 10px
+            color rgb(147, 153, 159)
+          .content
+            font-size 10px
+            .stress
+              line-height 24px
+              font-size 24px
+              color rgb(7, 17, 27)
+      .wish-wrapper
+        position absolute
+        top 18px
+        right 18px
+        .icon-favorite
+          display block
+          min-width 38px
           margin-bottom 4px
+          font-size 24px
+          line-height 24px
+          text-align center
+          &.active
+            color rgb(240, 20, 20)
+        .text
+          display block
           line-height 10px
+          text-align center
           font-size 10px
-          color rgb(147, 153, 159)
+          color rgb(77, 85, 93)
+    .bulletin
+      padding 18px 18px 0 18px
+      .title
+        margin-bottom 8px
+        font-size 14px
+        color rgb(7, 17, 27)
+      .content-wrapper
+        padding 0 12px 16px
+        border-1px(rgba(7, 17, 27, 0.1))
         .content
-          font-size 10px
-          .stress
-            line-height 24px
-            font-size 24px
-            color rgb(7, 17, 27)
-    .wish-wrapper
-      position absolute
-      top 18px
-      right 18px
-      .icon-favorite
-        display block
-        min-width 38px
-        margin-bottom 4px
-        font-size 24px
-        line-height 24px
-        text-align center
-        &.active
+          font-size 12px
+          line-height 24px
           color rgb(240, 20, 20)
-      .text
-        display block
-        line-height 10px
-        text-align center
-        font-size 10px
-        color rgb(77, 85, 93)
+      .bulletin-list
+        .bulletin-item
+          padding 16px 12px
+          border-1px(rgba(7, 17, 27, 0.1))
+          font-size 0
+          &:last-child
+            border-none()
+          .icon
+            display inline-block
+            width 16px
+            height 16px
+            vertical-align top
+            margin-right 6px
+            background-size 16px 16px
+            background-repeat no-repeat
+            &.decrease
+              bg-image('decrease_4')
+            &.discount
+              bg-image('discount_4')
+            &.guarantee
+              bg-image('guarantee_4')
+            &.invoice
+              bg-image('invoice_4')
+            &.special
+              bg-image('special_4')
+          .text
+            line-height 16px
+            vertical-align top
+            font-size 12px
+            color rgb(7, 17, 27)
 </style>
