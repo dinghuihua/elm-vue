@@ -124,7 +124,7 @@
           return type === this.selectType
         }
       }
-    },
+    }, // 监听来自子组件的事件
     events: {
       'ratingtype.choose' (type) {
         this.selectType = type

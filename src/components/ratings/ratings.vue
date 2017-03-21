@@ -28,7 +28,7 @@
       <ratingselect :ratings="ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></ratingselect>
       <div class="rating-wrapper">
         <ul>
-          <li v-for="rating in ratings" class="rating-item border-1px">
+          <li v-show="needShow(rating.rateType, rating.text)" v-for="rating in ratings" class="rating-item border-1px">
             <div class="avatar">
               <img :src="rating.avatar" width="28" height="28">
             </div>
@@ -111,6 +111,33 @@
       star,
       split,
       ratingselect
+    },
+    methods: {
+      needShow (type, text) {
+        if (this.onlyContent && !text) {
+          return false
+        }
+        if (this.selectType === ALL) {
+          return true
+        } else {
+          return type === this.selectType
+        }
+      }
+    },
+    events: {
+      'ratingtype.choose' (type) {
+        this.selectType = type
+        // $nextTick触发之后, dom才会更新
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
+      },
+      'content.toggle' (onlyContent) {
+        this.onlyContent = onlyContent
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
+      }
     }
   }
 </script>
