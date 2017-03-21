@@ -15,22 +15,36 @@
   </div>
 </template>
 
-<script>
-  import header from './components/header/header.vue'
+<script type="text/ecmascript-6">
+  import {urlParse} from 'assets/js/util'
+  import header from 'components/header/header.vue'
 
   const ERR_OK = 0
 
   export default {
     data () {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParm = urlParse()
+            console.log(queryParm)
+            return queryParm.id
+          })()
+        }
       }
     },
     created () {
-      this.$http.get('/api/seller').then(response => {
+      this.$http.get('/api/seller?id=' + this.seller.id).then(response => {
         response = response.body
         if (response.errno === ERR_OK) {
-          this.seller = response.data
+          /*
+           * this.seller = response.data
+           * 直接赋值 会导致id被干掉
+           * console.log(this.seller.id)  // undefined
+           */
+          // Object.assign(最终返回结果, ..., ...) 是官网提供的给对象扩展属性的方法
+          this.seller = Object.assign({}, this.seller, response.data)
+          console.log(this.seller.id)
         }
       })
     },
