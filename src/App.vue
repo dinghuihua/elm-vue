@@ -27,7 +27,6 @@
         seller: {
           id: (() => {
             let queryParm = urlParse()
-            console.log(queryParm)
             return queryParm.id
           })()
         }

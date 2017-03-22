@@ -70,6 +70,7 @@
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll'
+  import {saveToLocal, loadFromLocal} from '../../assets/js/store'
   import star from 'components/star/star'
   import split from 'components/split/split'
 
@@ -81,7 +82,9 @@
     },
     data () {
       return {
-        favorited: false
+        favorited: (() => {
+          return loadFromLocal(this.seller.id, 'favorite', false)
+        })()
       }
     },
     computed: {
@@ -137,10 +140,12 @@
         }
       },
       toggleFavorite (event) {
+        console.log(this.seller.id)
         if (!event._constructed) {
           return
         }
         this.favorited = !this.favorited
+        saveToLocal(this.seller.id, 'favorite', this.favorited)
       }
     },
     components: {
@@ -295,7 +300,7 @@
         font-size 14px
         color rgb(7, 17, 27)
       .info-item
-        padding-top 16px 12px
+        padding 16px 12px
         line-height 16px
         border-1px(rgba(7, 17, 27, 0.1))
         font-size 12px

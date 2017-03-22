@@ -26,5 +26,8 @@ router.map({
     component: seller
   }
 })
+router.redirect({
+  '/': 'goods'
+})
 router.start(app, '#app')
 
