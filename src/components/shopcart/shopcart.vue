@@ -177,7 +177,6 @@
         })
       },
       hideList () {
-        console.log('yingcang')
         this.fold = true
       },
       toPay () {
