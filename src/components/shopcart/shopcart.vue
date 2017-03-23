@@ -199,7 +199,7 @@
           }
         },
         enter (el) {
-          /* rf手动触发重绘 并让eslint跳过该检查*/
+          /* rf手动触发重绘 并让eslint跳过该检查 */
           /* eslint-disable no-unused-vars */
           let rf = el.offsetHeight
           this.$nextTick(() => {
