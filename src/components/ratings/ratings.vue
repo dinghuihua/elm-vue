@@ -1,5 +1,5 @@
 <template>
-  <div class="ratings" v-el:rating>
+  <div class="ratings" ref="rating">
     <div class="ratings-content">
       <div class="overview">
         <div class="overview-left">
@@ -25,7 +25,7 @@
         </div>
       </div>
       <split></split>
-      <ratingselect :ratings="ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></ratingselect>
+      <ratingselect @choose="selectType" @toggle="toggleContent" :ratings="ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></ratingselect>
       <div class="rating-wrapper">
         <ul>
           <li v-show="needShow(rating.rateType, rating.text)" v-for="rating in ratings" class="rating-item border-1px">
@@ -90,7 +90,7 @@
           // 数据变了, 但dom没有立即更新,会导致BScroll计算不正确, 所以应该调用$nextTick, dom更新ok后再使用BScroll
           this.$nextTick(() => {
             if (!this.scroll) {
-              this.scroll = new BScroll(this.$els.rating, {
+              this.scroll = new BScroll(this.$refs.rating, {
                 click: true
               })
             } else {
@@ -121,17 +121,15 @@
         } else {
           return type === this.selectType
         }
-      }
-    },
-    events: {
-      'ratingtype.choose' (type) {
+      },
+      selectType (type) {
         this.selectType = type
         // $nextTick触发之后, dom才会更新
         this.$nextTick(() => {
           this.scroll.refresh()
         })
       },
-      'content.toggle' (onlyContent) {
+      toggleContent (onlyContent) {
         this.onlyContent = onlyContent
         this.$nextTick(() => {
           this.scroll.refresh()

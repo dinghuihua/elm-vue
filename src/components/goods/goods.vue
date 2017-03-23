@@ -1,45 +1,50 @@
 <template>
-  <div class="goods">
-    <div class="menu-wrapper" v-el:menu-wrapper>
-      <ul>
-        <li v-for="item in goods" class="menu-item" :class="{'current':currentIndex===$index}" @click="selectMenu($index, $event)">
-          <span class="text border-1px">
-            <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
-          </span>
-        </li>
-      </ul>
+  <div>
+    <div class="goods">
+      <!--<div class="menu-wrapper" v-el:menu-wrapper>-->
+      <div class="menu-wrapper" ref="menu-wrapper">
+        <ul>
+          <li v-for="(item, index) in goods" class="menu-item" :class="{'current':currentIndex===index}"
+              @click="selectMenu(index, $event)">
+            <span class="text border-1px">
+              <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="foods-wrapper" ref="foods-wrapper">
+        <ul>
+          <li v-for="item in goods" class="food-list food-list-hook">
+            <h1 class="title">{{item.name}}</h1>
+            <ul>
+              <li v-for="food in item.foods" @click="chooseFood(food, $event)" class="food-item border-1px">
+                <div class="icon">
+                  <img :src="food.icon" width="57" height="57">
+                </div>
+                <div class="content">
+                  <h2 class="name">{{food.name}}</h2>
+                  <p class="desc">{{food.description}}</p>
+                  <div class="extra">
+                    <span class="sell-count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
+                  </div>
+                  <div class="price">
+                    <span class="now">￥{{food.price}}</span><span v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</span>
+                  </div>
+                  <div class="cartcontrol-wrapper">
+                    <!-- 父组件可以在使用子组件的地方直接用 v-on 来监听子组件触发的事件。 -->
+                    <cartcontrol @add="addFood" :food="food"></cartcontrol>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
     </div>
-    <div class="foods-wrapper" v-el:foods-wrapper>
-      <ul>
-        <li v-for="item in goods" class="food-list food-list-hook">
-          <h1 class="title">{{item.name}}</h1>
-          <ul>
-            <li v-for="food in item.foods" @click="chooseFood(food, $event)" class="food-item border-1px">
-              <div class="icon">
-                <img :src="food.icon" width="57" height="57">
-              </div>
-              <div class="content">
-                <h2 class="name">{{food.name}}</h2>
-                <p class="desc">{{food.description}}</p>
-                <div class="extra">
-                  <span class="sell-count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
-                </div>
-                <div class="price">
-                  <span class="now">￥{{food.price}}</span><span v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</span>
-                </div>
-                <div class="cartcontrol-wrapper">
-                  <cartcontrol :food="food"></cartcontrol>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <shopcart v-ref:shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <!-- 商品详情页 @add 接收来自子组件food 的 add 方法-->
+    <food @add="addFood" :food="selectedFood" ref="food"></food>
   </div>
-  <!-- 商品详情页 -->
-  <food :food="selectedFood" v-ref:food></food>
 </template>
 
 <script type="text/ecmascript-6">
@@ -110,10 +115,10 @@
         })
       },
       _initScroll () {
-        this.menuScroll = new BScroll(this.$els.menuWrapper, {
+        this.menuScroll = new BScroll(this.$refs.menuWrapper, {
           click: true
         })
-        this.foodScroll = new BScroll(this.$els.foodsWrapper, {
+        this.foodScroll = new BScroll(this.$refs.foodsWrapper, {
           click: true,
           probeType: 3
         })
@@ -122,7 +127,7 @@
         })
       },
       _calulatHeight () {
-        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
+        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
         let height = 0
         this.listHeight.push(height)
         for (let i = 0; i < foodList.length; i++) {
@@ -135,7 +140,7 @@
         if (!event._constructed) {
           return
         }
-        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
+        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
         let el = foodList[index]
         this.foodScroll.scrollToElement(el, 300)
       },
@@ -145,18 +150,15 @@
         }
         this.$refs.food.show()
         this.selectedFood = food
+      },
+      addFood (target) {
+        this._drop(target)
       }
     },
     components: {
       shopcart,
       cartcontrol,
       food
-    },
-    events: {
-      /* 接收执行 来自cartcontrol的cart.add事件 */
-      'cart.add' (target) {
-        this._drop(target)
-      }
     }
   }
 </script>

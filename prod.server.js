@@ -42,7 +42,7 @@ app.use('/api', apiRoutes);
 // 定义static目录
 app.use(express.static('./dist'))
 
-// express启动服务
+// express启动服务 命令: node prod.server.js
 module.exports = app.listen(port, function (err) {
   if (err) {
     console.log(err)

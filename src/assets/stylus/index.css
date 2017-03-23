@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'elm-icon';
-  src: url("assets/fonts/elm-icon.eot?pkpj64");
-  src: url("assets/fonts/elm-icon.eot?pkpj64#iefix") format('embedded-opentype'), url("assets/fonts/elm-icon.ttf?pkpj64") format('truetype'), url("assets/fonts/elm-icon.woff?pkpj64") format('woff'), url("assets/fonts/elm-icon.svg?pkpj64#elm-icon") format('svg');
+  src: url("../fonts/elm-icon.eot?pkpj64");
+  src: url("../fonts/elm-icon.eot?pkpj64#iefix") format('embedded-opentype'), url("../fonts/elm-icon.ttf?pkpj64") format('truetype'), url("../fonts/elm-icon.woff?pkpj64") format('woff'), url("../fonts/elm-icon.svg?pkpj64#elm-icon") format('svg');
   font-weight: normal;
   font-style: normal;
 }

@@ -72,15 +72,15 @@
           return
         }
         this.selectType = type
-        // $dispatch子组件告诉父组件selectType变化了
-        this.$dispatch('ratingtype.choose', type)
+        // vue1.0 $dispatch子组件告诉父组件selectType变化了
+        this.$emit('choose', type)
       },
       toggleContent (event) {
         if (!event._constructed) {
           return
         }
         this.onlyContent = !this.onlyContent
-        this.$dispatch('content.toggle', this.onlyContent)
+        this.$emit('toggle', this.onlyContent)
       }
     }
   }

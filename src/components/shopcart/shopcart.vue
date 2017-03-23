@@ -1,46 +1,56 @@
 <template>
-  <div class="shopcart">
-    <div class="content" @click="totalList()">
-      <div class="con-left">
-        <div class="logo-wrapper">
-          <div class="logo" :class="{'highlight': totalCount>0}">
-            <i class="icon-shopping_cart" :class="{'highlight': totalCount>0}"></i>
+  <div>
+    <div class="shopcart">
+      <div class="content" @click="totalList()">
+        <div class="con-left">
+          <div class="logo-wrapper">
+            <div class="logo" :class="{'highlight': totalCount>0}">
+              <i class="icon-shopping_cart" :class="{'highlight': totalCount>0}"></i>
+            </div>
+            <div class="num" v-show="totalCount>0">{{totalCount}}</div>
           </div>
-          <div class="num" v-show="totalCount>0">{{totalCount}}</div>
+          <div class="price" :class="{'highlight': totalPrice>0}">￥{{totalPrice}}</div>
+          <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
         </div>
-        <div class="price" :class="{'highlight': totalPrice>0}">￥{{totalPrice}}</div>
-        <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
+        <div class="con-right" @click.stop.prevent="toPay()">
+          <div class="pay" :class="payClass">{{payDesc}}</div>
+        </div>
       </div>
-      <div class="con-right" @click.stop.prevent="toPay()">
-        <div class="pay" :class="payClass">{{payDesc}}</div>
-      </div>
-    </div>
-    <div class="ball-container">
-      <div transition="drop" v-for="ball in balls" v-show="ball.show" class="ball">
-        <div class="inner inner-hook"></div>
-      </div>
-    </div>
-    <div class="shopcart-list" v-show="listShow" transition="fold">
-      <div class="list-header">
-        <h1 class="title">购物车</h1>
-        <span class="empty" @click="emptyCart()">清空</span>
-      </div>
-      <div class="list-content" v-el:list-content>
-        <ul>
-          <li class="food" v-for="food in selectFoods">
-            <span class="name">{{food.name}}</span>
-            <div class="price">
-              <span>￥{{food.price*food.count}}</span>
+      <div class="ball-container">
+        <div v-for="ball in balls">
+          <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
+            <div class="ball" v-show="ball.show" >
+              <div class="inner inner-hook"></div>
             </div>
-            <div class="cartcontrol-wrapper">
-              <cartcontrol :food="food"></cartcontrol>
-            </div>
-          </li>
-        </ul>
+          </transition>
+        </div>
       </div>
+      <transition name="fold">
+        <div class="shopcart-list" v-show="listShow">
+          <div class="list-header">
+            <h1 class="title">购物车</h1>
+            <span class="empty" @click="emptyCart()">清空</span>
+          </div>
+          <div class="list-content" ref="list-content">
+            <ul>
+              <li class="food" v-for="food in selectFoods">
+                <span class="name">{{food.name}}</span>
+                <div class="price">
+                  <span>￥{{food.price*food.count}}</span>
+                </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol :food="food"></cartcontrol>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </transition>
     </div>
+    <transition name="fade">
+      <div class="list-mask" @click="hideList()" v-show="listShow"></div>
+    </transition>
   </div>
-  <div class="list-mask" @click="hideList()" v-show="listShow" transition="fade"></div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -129,7 +139,7 @@
         if (show) {
           this.$nextTick(() => {
             if (!this.scroll) {
-              this.scroll = new BScroll(this.$els.listContent, {
+              this.scroll = new BScroll(this.$refs.listContent, {
 
                 click: true
 
@@ -176,46 +186,44 @@
         } else {
           window.alert(`支付${this.totalPrice}元`)
         }
-      }
-    },
-    transitions: {
-      drop: {
-        beforeEnter (el) {
-          let count = this.balls.length
-          while (count--) {
-            let ball = this.balls[count]
-            if (ball.show) {
-              /* 获取该元素相对于视口的位置 */
-              let rect = ball.el.getBoundingClientRect()
-              let x = rect.left - 32
-              let y = -(window.innerHeight - rect.top - 22)
-              el.style.display = ''
-              el.style.webkitTransform = `translate3d(0, ${y}px, 0)`
-              el.style.transform = `translate3d(0, ${y}px, 0)`
-              let inner = el.getElementsByClassName('inner-hook')[0]
-              inner.style.webkitTransform = `translate3d(${x}px, 0, 0)`
-              inner.style.transform = `translate3d(${x}px, 0, 0)`
-            }
-          }
-        },
-        enter (el) {
-          /* rf手动触发重绘 并让eslint跳过该检查*/
-          /* eslint-disable no-unused-vars */
-          let rf = el.offsetHeight
-          this.$nextTick(() => {
-            el.style.webkitTransform = 'translate3d(0, 0, 0)'
-            el.style.transform = 'translate3d(0, 0, 0)'
+      },
+      beforeDrop (el) {
+        let count = this.balls.length
+        while (count--) {
+          let ball = this.balls[count]
+          if (ball.show) {
+            /* 获取该元素相对于视口的位置 */
+            let rect = ball.el.getBoundingClientRect()
+            let x = rect.left - 32
+            let y = -(window.innerHeight - rect.top - 22)
+            el.style.display = ''
+            el.style.webkitTransform = `translate3d(0, ${y}px, 0)`
+            el.style.transform = `translate3d(0, ${y}px, 0)`
             let inner = el.getElementsByClassName('inner-hook')[0]
-            inner.style.webkitTransform = 'translate3d(0, 0, 0)'
-            inner.style.transform = 'translate3d(0, 0, 0)'
-          })
-        },
-        afterEnter (el) {
-          let ball = this.dropBalls.shift()
-          if (ball) {
-            ball.show = false
-            el.style.display = 'none'
+            inner.style.webkitTransform = `translate3d(${x}px, 0, 0)`
+            inner.style.transform = `translate3d(${x}px, 0, 0)`
           }
+        }
+      },
+      dropping (el, done) {
+        /* rf手动触发重绘 并让eslint跳过该检查 */
+        /* eslint-disable no-unused-vars */
+        let rf = el.offsetHeight
+        this.$nextTick(() => {
+          el.style.webkitTransform = 'translate3d(0, 0, 0)'
+          el.style.transform = 'translate3d(0, 0, 0)'
+          let inner = el.getElementsByClassName('inner-hook')[0]
+          inner.style.webkitTransform = 'translate3d(0, 0, 0)'
+          inner.style.transform = 'translate3d(0, 0, 0)'
+          // vue2.0 必须要有回调done (告诉vue动画结束)  否则过渡会立即执行
+          el.addEventListener('transitionend', done)
+        })
+      },
+      afterDrop (el) {
+        let ball = this.dropBalls.shift()
+        if (ball) {
+          ball.show = false
+          el.style.display = 'none'
         }
       }
     },
@@ -318,7 +326,7 @@
         left 32px
         bottom 22px
         z-index 100
-        &.drop-transition
+        &.drop-enter-active, &.drop-leave-active
           transition all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
           .inner
             width 16px
@@ -326,18 +334,16 @@
             border-radius 50%
             background rgb(0, 168, 220)
             transition all 0.4s linear
-
-
     .shopcart-list
       position absolute
       top 0
       left 0
       z-index -1
       width 100%
-      &.fold-transition
+      transform translate3d(0, -100%, 0)
+      &.fold-enter-active, &.fold-leave-active
         transition all 0.3s
-        transform translate3d(0, -100%, 0)
-      &.fold-enter, &.fold-leave
+      &.fold-enter, &.fold-leave-active
         transform translate3d(0, 0, 0)
       .list-header
         height 40px
@@ -388,11 +394,11 @@
     height 100%
     z-index 40
     backdrop-filter: blur(10px)
-    &.fade-transition
+    opacity 1
+    background-color rgba(7,17,27,0.6)
+    &.fade-enter-active, &.fade-leave-active
       transition all 0.5s
-      opacity 1
-      background-color rgba(7,17,27,0.6)
-    &.fade-enter, &.fade-leave
+    &.fade-enter, &.fade-leave-active
       opacity 0
       background-color rgba(7,17,27,0)
 </style>
