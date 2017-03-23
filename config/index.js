@@ -15,7 +15,7 @@ module.exports = {
 		// npm install --save-dev compression-webpack-plugin
 		productionGzip: false,
 		productionGzipExtensions: ['js', 'css'],
-		port: 9000
+		port: 9001
 	},
 	dev: {
 		env: require('./dev.env'),

@@ -12,12 +12,13 @@ router.get('/', function (req, res, next) {
 })
 app.use(router)
 
-// 定义异步接口
-var apiRoutes = express.Router()
 var appData = require('./data.json');
 var seller = appData.seller;
 var goods = appData.goods;
 var ratings = appData.ratings;
+
+// 定义异步接口
+var apiRoutes = express.Router()
 
 apiRoutes.get('/seller', function(req, res){
   res.json({
