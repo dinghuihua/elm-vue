@@ -33,7 +33,7 @@
         <split></split>
         <div class="food-ratings">
           <h1 class="title">商品评价</h1>
-          <ratingselect :ratings="food.ratings" :select-type="selectType"
+          <ratingselect @choose="selectRating" @toggle="toggleContent" :ratings="food.ratings" :select-type="selectType"
                         :only-content="onlyContent" :desc="desc"></ratingselect>
           <div class="rating-wrapper">
             <ul v-show="food.ratings && food.ratings.length">
@@ -128,18 +128,16 @@
           // 只有当前评价的类型 === 选择的类型,才返回true
           return type === this.selectType
         }
-      }
-    }, // 监听来自子组件的事件
-    events: {
-      'ratingtype.choose' (type) {
+      },
+      selectRating (type) {
         this.selectType = type
         // $nextTick触发之后, dom才会更新
         this.$nextTick(() => {
           this.scroll.refresh()
         })
       },
-      'content.toggle' (onlyContent) {
-        this.onlyContent = onlyContent
+      toggleContent () {
+        this.onlyContent = !this.onlyContent
         this.$nextTick(() => {
           this.scroll.refresh()
         })

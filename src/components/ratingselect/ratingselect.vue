@@ -71,7 +71,7 @@
         if (!event._constructed) {
           return
         }
-        this.selectType = type
+        // this.selectType = type
         // vue1.0 $dispatch子组件告诉父组件selectType变化了
         this.$emit('choose', type)
       },
@@ -79,8 +79,8 @@
         if (!event._constructed) {
           return
         }
-        this.onlyContent = !this.onlyContent
-        this.$emit('toggle', this.onlyContent)
+        // this.onlyContent = !this.onlyContent
+        this.$emit('toggle')
       }
     }
   }

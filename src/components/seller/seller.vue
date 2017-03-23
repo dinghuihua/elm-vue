@@ -49,8 +49,8 @@
       <split></split>
       <div class="pics">
         <h1 class="title">商家实景</h1>
-        <div class="pic-wrapper" ref="pic-wrapper">
-          <ul class="pic-list" ref="pic-list">
+        <div class="pic-wrapper" ref="picWrapper">
+          <ul class="pic-list" ref="picList">
             <li class="pic-item" v-for="pic in seller.pics">
               <img :src="pic" width="120" height="90">
             </li>
@@ -98,14 +98,18 @@
     watch: {
       // 观测 seller 的变化 刚开始刷新页面的时候才会改变,组件间切换时不会改变
       'seller' () {
-        this._initScroll()
-        this._initPics()
+        this.$nextTick(() => {
+          this._initScroll()
+          this._initPics()
+        })
       }
     },
-    ready () {
+    mounted () {
       // dom 完全渲染完才会调用此钩子 它的执行优先于watch
-      this._initScroll()
-      this._initPics()
+      this.$nextTick(() => {
+        this._initScroll()
+        this._initPics()
+      })
     },
     methods: {
       _initScroll () {

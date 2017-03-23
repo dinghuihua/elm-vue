@@ -25,7 +25,8 @@
         </div>
       </div>
       <split></split>
-      <ratingselect @choose="selectType" @toggle="toggleContent" :ratings="ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></ratingselect>
+      <ratingselect @choose="selectRating" @toggle="toggleContent"
+                    :ratings="ratings" :select-type="selectType" :only-content="onlyContent"></ratingselect>
       <div class="rating-wrapper">
         <ul>
           <li v-show="needShow(rating.rateType, rating.text)" v-for="rating in ratings" class="rating-item border-1px">
@@ -74,12 +75,7 @@
       return {
         ratings: [],
         selectType: ALL,
-        onlyContent: true,
-        desc: {
-          all: '全部',
-          positive: '满意',
-          negative: '不满意'
-        }
+        onlyContent: true
       }
     },
     created () {
@@ -122,15 +118,15 @@
           return type === this.selectType
         }
       },
-      selectType (type) {
+      selectRating (type) {
         this.selectType = type
         // $nextTick触发之后, dom才会更新
         this.$nextTick(() => {
           this.scroll.refresh()
         })
       },
-      toggleContent (onlyContent) {
-        this.onlyContent = onlyContent
+      toggleContent () {
+        this.onlyContent = !this.onlyContent
         this.$nextTick(() => {
           this.scroll.refresh()
         })
