@@ -1375,5 +1375,32 @@
       "avatar": "http://static.galileo.xiaojukeji.com/static/tms/default_header.png",
       "recommend": []
     }
+  ],
+  "banners": [
+    {
+      "id": "001",
+      "img_src": "/assets/img/ban1.jpg",
+      "link":null
+    },
+    {
+      "id": "002",
+      "img_src": "/assets/img/ban2.jpg",
+      "link":null
+    },
+    {
+      "id": "003",
+      "img_src": "/assets/img/ban3.jpg",
+      "link":null
+    },
+    {
+      "id": "004",
+      "img_src": "/assets/img/ban4.jpg",
+      "link":null
+    },
+    {
+      "id": "005",
+      "img_src": "/assets/img/ban5.jpg",
+      "link":null
+    }
   ]
 }

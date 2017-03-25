@@ -20,8 +20,16 @@ var appData = require('../data.json')
 var seller = appData.seller
 var goods = appData.goods
 var ratings = appData.ratings
+var banners = appData.banners
 
 var apiRoutes = express.Router()
+
+apiRoutes.get('/banners', function (req, res) {
+  res.json({
+    errno: 0,
+    data: banners
+  });
+})
 
 apiRoutes.get('/seller', function (req, res) {
   res.json({
@@ -43,7 +51,33 @@ apiRoutes.get('/ratings', function (req, res) {
     data: ratings
   });
 })
-
+/*apiRoutes.get('/getSeller', function (req, res) {
+  var sellerId = req.query.id;
+  console.log(sellerId)
+  // 不传参数 返回所有seller数据
+  if (!sellerId) {
+    res.json({
+      errno: 0,
+      data: sellers
+    })
+  } else {
+    // 得到所有sellers的id 数组
+    var sellerIdArr = []
+    sellers.forEach((seller, index) => {
+      sellerIdArr.push(seller.id)
+    })
+    if (sellerIdArr.indexOf(sellerId)) {
+      sellers.forEach((seller, index) => {
+        if (sellerId === seller.id) {
+          res.json({
+            errno: 0,
+            data: seller
+          })
+        }
+      })
+    }
+  }
+})*/
 app.use('/api', apiRoutes)
 
 var compiler = webpack(webpackConfig)
